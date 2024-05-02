@@ -1,17 +1,27 @@
 
 function fetchStock() {
     const stockSymbol = document.getElementById('stockSymbol').value.trim().toUpperCase();
-    document.getElementById('outputSymbol').innerText += ' ' + stockSymbol; // 在现有文本后添加输入的股票代码
-    // 清空所有相關的容器
-    const containers = ['incomeStatementContainer', 'earningsCallTranscriptContainer', 'earningsCallCalendarContainer', 'historical_earning_calendar', 'stock_dividend_calendar'];
-    containers.forEach(containerId => {
-        const container = document.getElementById(containerId);
-        if (container) {
-            container.innerHTML = ''; // 清空容器内容
-        }
-    });
+    const previousSymbol = document.getElementById('outputSymbol').getAttribute('data-last-symbol'); // 获取上一次的股票代码
+
+    // 判断股票代码是否改变
+    if (stockSymbol !== previousSymbol) {
+        // 仅当股票代码发生改变时，更新显示并清空容器
+        document.getElementById('outputSymbol').innerText = '現在查詢的是：' + stockSymbol;
+        document.getElementById('outputSymbol').setAttribute('data-last-symbol', stockSymbol); // 更新最后一次的股票代码
+
+        // 清空所有相關的容器
+        const containers = ['incomeStatementContainer', 'earningsCallTranscriptContainer', 'earningsCallCalendarContainer', 'historical_earning_calendar', 'stock_dividend_calendar'];
+        containers.forEach(containerId => {
+            const container = document.getElementById(containerId);
+            if (container) {
+                container.innerHTML = ''; // 清空容器內容
+            }
+        });
+    }
+
     return stockSymbol;
 }
+
 
 
 //////////////財務收入 Income Statement/////////////////
@@ -122,63 +132,64 @@ function fetchData_IncomeStatement(apiUrl, callback, containerId) {
 
 //////////////法說會逐字稿 Earnings Call Transcript/////////////////
 function fetchEarningsCallTranscript() {
-    stockSymbol = fetchStock();
+    var stockSymbol = fetchStock();
     const year = document.getElementById('yearInput').value;
     const quarter = document.getElementById('quarterInput').value;
-    const apiKey = 'GXqcokYeRt6rTqe8cpcUxGPiJhnTIzkf'; // Your API key
+    const apiKey = 'GXqcokYeRt6rTqe8cpcUxGPiJhnTIzkf';
+
     if (stockSymbol.length === 0 || year.length === 0 || quarter.length === 0) {
-        alert('Please enter stock symbol, year, and quarter.');
+        alert('請輸入股票代碼、年份及季度。');
         return;
     }
+
     const apiUrl = `https://financialmodelingprep.com/api/v3/earning_call_transcript/${stockSymbol}?year=${year}&quarter=${quarter}&apikey=${apiKey}`;
     fetchData_Transcript(apiUrl, displayEarningsCallTranscript, 'earningsCallTranscriptContainer');
 }
 
 function displayEarningsCallTranscript(transcript, container) {
+    if (!transcript || !transcript.content) {
+        container.innerHTML = '<p>資料不可用。</p>';
+        return;
+    }
+
     let htmlContent = `<p id="transcriptPreview">${transcript.content.slice(0, 1000)}...</p>`;
     htmlContent += `<p id="fullTranscript" style="display:none;">${transcript.content}</p>`;
+    htmlContent += '<button id="expandButton" onclick="expandTranscript()">閱讀更多</button>';
+    htmlContent += '<button id="collapseButton" style="display: none;" onclick="collapseTranscript()">顯示較少</button>';
     container.innerHTML = htmlContent;
-    document.getElementById('expandButton').style.display = 'inline';
 }
 
 function expandTranscript() {
     document.getElementById('transcriptPreview').style.display = 'none';
     document.getElementById('fullTranscript').style.display = 'block';
     document.getElementById('expandButton').style.display = 'none';
-    document.getElementById('collapseButton').style.display = 'inline'; // 显示 "Read Less" 按钮
+    document.getElementById('collapseButton').style.display = 'inline';
 }
 
 function collapseTranscript() {
     document.getElementById('transcriptPreview').style.display = 'block';
     document.getElementById('fullTranscript').style.display = 'none';
-    document.getElementById('expandButton').style.display = 'inline'; // 再次显示 "Read More" 按钮
-    document.getElementById('collapseButton').style.display = 'none'; // 隐藏 "Read Less" 按钮
+    document.getElementById('expandButton').style.display = 'inline';
+    document.getElementById('collapseButton').style.display = 'none';
 }
 
 function fetchData_Transcript(apiUrl, callback, containerId) {
     const container = document.getElementById(containerId);
-    container.innerHTML = '<p>Loading...</p>';
+    container.innerHTML = '<p>正在加載數據...</p>';
     fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
-            // 檢查回應資料是否為 undefined 或非陣列
-            if (data === undefined || !Array.isArray(data)) {
-                container.innerHTML = '<p>Error loading data: Data is not an array or is undefined.</p>';
+            if (data && data.length > 0) {
+                callback(data[0], container);
             } else {
-                if (data.length > 0) {
-                    callback(data[0], container);
-                } else {
-                    container.innerHTML = '<p>No data found for this symbol.</p>';
-                }
+                container.innerHTML = '<p>無相關數據。</p>';
             }
         })
         .catch(error => {
-            console.error('Error fetching data: ', error);
-            container.innerHTML = '<p>Error loading data. Please check the console for more details.</p>';
+            console.error('數據加載錯誤: ', error);
+            container.innerHTML = '<p>數據加載錯誤。請檢查控制台了解更多詳情。</p>';
         });
 }
-
-
 //////////////法說會日曆 Earnings Call Calendar/////////////////
 
 

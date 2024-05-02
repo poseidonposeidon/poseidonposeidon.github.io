@@ -1,6 +1,7 @@
 
 function fetchStock() {
     const stockSymbol = document.getElementById('stockSymbol').value.trim().toUpperCase();
+    document.getElementById('outputSymbol').innerText += ' ' + stockSymbol; // 在现有文本后添加输入的股票代码
     // 清空所有相關的容器
     const containers = ['incomeStatementContainer', 'earningsCallTranscriptContainer', 'earningsCallCalendarContainer', 'historical_earning_calendar', 'stock_dividend_calendar'];
     containers.forEach(containerId => {

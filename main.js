@@ -268,41 +268,43 @@ function display_historical_earning_calendar(data, container) {
         return;
     }
 
-    let htmlContent = '<table border="1">';
-    htmlContent += `
-        <tr>
-            <th>Date</th>
-            <th>Symbol</th>
-            <th>EPS</th>
-            <th>Estimated EPS</th>
-            <th>Time</th>
-            <th>Revenue</th>
-            <th>Estimated Revenue</th>
-            <th>Fiscal Date Ending</th>
-        </tr>
-    `;
+    let rows = {
+        date: ['Date'],
+        symbol: ['Symbol'],
+        eps: ['EPS'],
+        estimatedEPS: ['Estimated EPS'],
+        time: ['Time'],
+        revenue: ['Revenue'],
+        estimatedRevenue: ['Estimated Revenue'],
+        fiscalDateEnding: ['Fiscal Date Ending']
+    };
 
     data.forEach(item => {
         const itemDate = new Date(item.date);
         if (itemDate >= startDate && itemDate <= endDate) {
-            htmlContent += `
-                <tr>
-                    <td>${item.date || 'N/A'}</td>
-                    <td>${item.symbol || 'N/A'}</td>
-                    <td>${item.eps != null ? item.eps : 'N/A'}</td>
-                    <td>${item.epsEstimated != null ? item.epsEstimated : 'N/A'}</td>
-                    <td>${item.time || 'N/A'}</td>
-                    <td>${item.revenue != null ? item.revenue.toLocaleString() : 'N/A'}</td>
-                    <td>${item.revenueEstimated != null ? item.revenueEstimated.toLocaleString() : 'N/A'}</td>
-                    <td>${item.fiscalDateEnding || 'N/A'}</td>
-                </tr>
-            `;
+            rows.date.push(item.date || 'N/A');
+            rows.symbol.push(item.symbol || 'N/A');
+            rows.eps.push(item.eps != null ? item.eps : 'N/A');
+            rows.estimatedEPS.push(item.epsEstimated != null ? item.epsEstimated : 'N/A');
+            rows.time.push(item.time || 'N/A');
+            rows.revenue.push(item.revenue != null ? item.revenue.toLocaleString() : 'N/A');
+            rows.estimatedRevenue.push(item.revenueEstimated != null ? item.revenueEstimated.toLocaleString() : 'N/A');
+            rows.fiscalDateEnding.push(item.fiscalDateEnding || 'N/A');
         }
     });
 
+    let htmlContent = '<table border="1">';
+    Object.keys(rows).forEach(key => {
+        htmlContent += `<tr><th>${rows[key][0]}</th>`;
+        rows[key].slice(1).forEach(value => {
+            htmlContent += `<td>${value}</td>`;
+        });
+        htmlContent += '</tr>';
+    });
     htmlContent += '</table>';
     container.innerHTML = htmlContent;
 }
+
 
 function fetchData_historical_earning_calendar(apiUrl, callback, containerId) {
     const container = document.getElementById(containerId);

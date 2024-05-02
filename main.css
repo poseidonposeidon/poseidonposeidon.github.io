@@ -62,6 +62,13 @@ th {
     width: 100%;
     max-height: 700px;  /* 可视区域的最大高度 */
 }
+
+/* Logo 图片样式 */
+.logo {
+    height: 50px; /* 设置一个适当的高度 */
+    width: auto; /* 宽度自适应 */
+}
+
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -70,28 +77,33 @@ th {
     padding: 10px 20px; /* 上下10px，左右20px的填充 */
 }
 
-/* Logo 图片样式 */
-.logo {
-    height: 50px; /* 设置一个适当的高度 */
-    width: auto; /* 宽度自适应 */
-}
-
+/* 導航鏈接容器樣式 */
 .navbar-links {
-    display: flex;        /* 使用flexbox布局 */
-    align-items: center;  /* 垂直居中對齊所有項目 */
+    display: flex;
+    align-items: center;
+    height: 100%; /* 確保對齊 */
 }
 
+/* 链接样式 */
 .navbar-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* 中心對齊文本 */
     text-decoration: none;
     color: black;
-    margin-left: 20px;
-    font-size: 16px;
-    padding: 10px 15px;  /* 添加一些内边距以提高可点击区域 */
-    border-radius: 5px;  /* 可选，为链接添加圆角 */
-    transition: color 0.3s; /* 平滑颜色过渡效果 */
+    background-color: #ffffff; /* 白色背景 */
+    margin: 0 10px; /* 左右邊距 */
+    padding: 8px 16px; /* 上下左右填充 */
+    border-radius: 5px;
+    transition: all 0.3s ease; /* 平滑过渡效果 */
 }
 
 .navbar-links a:hover {
-    color: #0056b3;     /* 鼠标悬停时的颜色 */
-    background-color: #f2f2f2; /* 可选，鼠标悬停时的背景色 */
+    color: #0056b3;
+    background-color: #e6e6e6; /* 悬停背景色 */
+}
+
+/* 確保链接宽度相同 */
+.navbar-links a {
+    width: 100px; /* 或其他適合的固定寬度 */
 }

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="main.css">
+    <title>Financial Data Lookup</title>
+</head>
+<body>
+    <h1>Financial Data</h1>
+
+
+    <div>
+    <h2>財務收入 Income Statement</h2>
+    <input type="text" id="stockSymbol" placeholder="輸入代碼">
+    <label for="period">選擇時段：</label>
+    <select id="period">
+        <option value="annual">Annual</option>
+        <option value="quarter">Quarter</option>
+    </select>
+    <button onclick="fetchIncomeStatement()">載入報表</button>
+    <div id="incomeStatementContainer"></div>
+    <!-- 將按鈕放在 container 下方 -->
+    <button id="expandButton_Income" onclick="expandIncomeStatement()" style="display: none;">Read More</button>
+    <button id="collapseButton_Income" style="display: none;" onclick="collapseIncomeStatement()">Read Less</button>
+</div>
+
+
+    <div>
+        <h2>法說會逐字稿 Earnings Call Transcript</h2>
+        <input type="number" id="yearInput" placeholder="輸入年分">
+        <input type="number" id="quarterInput" placeholder="輸入季度">
+        <button onclick="fetchEarningsCallTranscript()">載入逐字稿</button>
+        <div id="earningsCallTranscriptContainer"></div>
+        <button id="expandButton" style="display:none;" onclick="expandIncomeStatement()">Read More</button>
+        <button id="collapseButton" style="display:none;" onclick="collapseIncomeStatement()">Read Less</button>
+    </div>
+
+    <div>
+        <h2>法說會日曆 Earnings Call Calendar</h2>
+        <input type="date" id="fromDate" placeholder="From Date">
+        <input type="date" id="toDate" placeholder="To Date">
+        <button onclick="fetchEarningsCallCalendar()">載入日曆</button>
+        <div id="earningsCallCalendarContainer"></div>
+    </div>
+
+    <div>
+        <h2>歷史獲利和未來獲利 Historical and Future Earnings</h2>
+        <input type="date" id="fromDate_1" placeholder="From Date">
+        <input type="date" id="toDate_1" placeholder="To Date">
+        <button onclick="fetch_historical_earning_calendar()">載入日曆</button>
+        <div id="historical_earning_calendar"></div>
+    </div>
+
+
+
+
+
+
+
+    <script src="main.js"></script>
+</body>
+</html>

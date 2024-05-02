@@ -10,7 +10,7 @@ function fetchStock() {
         document.getElementById('outputSymbol').setAttribute('data-last-symbol', stockSymbol); // 更新最后一次的股票代码
 
         // 清空所有相關的容器
-        const containers = ['incomeStatementContainer', 'earningsCallTranscriptContainer', 'earningsCallCalendarContainer', 'historical_earning_calendar', 'stock_dividend_calendar','Insider_Trades'];
+        const containers = ['incomeStatementContainer', 'earningsCallTranscriptContainer', 'earningsCallCalendarContainer', 'historical_earning_calendar', 'stock_dividend_calendar'];
         containers.forEach(containerId => {
             const container = document.getElementById(containerId);
             if (container) {
@@ -431,7 +431,6 @@ function display_stock_dividend_calendar(data, container) {
 
 
 
-
 function fetchData(apiUrl, callback, containerId) {
     const container = document.getElementById(containerId);
     container.innerHTML = '<p>Loading...</p>'; // 提供加载时的临时内容
@@ -454,71 +453,3 @@ function fetchData(apiUrl, callback, containerId) {
             container.innerHTML = '<p>Error loading data. Please check the console for more details.</p>';
         });
 }
-
-//////////////內部人交易/////////////////
-function fetchInsiderTrades() {
-    const apiKey = 'GXqcokYeRt6rTqe8cpcUxGPiJhnTIzkf'; // 替換為你的 API 密鑰
-    stockSymbol = fetchStock();
-    const apiUrl = `https://financialmodelingprep.com/api/v4/insider-trading?symbol=${stockSymbol}&page=0&apikey=${apiKey}`;
-
-    fetch(apiUrl)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            displayInsiderTrades(data);
-        })
-        .catch(error => {
-            console.error('Error fetching data: ', error);
-            document.getElementById('Insider_Trades').innerHTML = '<tr><td colspan="11">Error loading data. Please check the console for more details.</td></tr>';
-        });
-}
-
-function displayInsiderTrades(data) {
-    const table = document.getElementById('Insider_Trades');
-    table.innerHTML = ''; // 清空表格
-
-    if (!data || data.length === 0) {
-        table.innerHTML = '<p>No data available.</p>';
-        return;
-    }
-
-    // 構建所有行數據
-    const headers = ['Symbol', 'Filing Date', 'Transaction Date', 'Reporting Name', 'Transaction Type', 'Securities Owned', 'Securities Transacted', 'Security Name', 'Price', 'Form Type', 'Link'];
-    const rows = headers.map(header => [`<th style="background-color: #f2f2f2;">${header}</th>`]); // 將每個標題創建為一行的第一列
-
-    // 將每條數據的屬性添加到對應的行
-    data.forEach(item => {
-        rows[0].push(`<td>${item.symbol}</td>`);
-        rows[1].push(`<td>${item.filingDate}</td>`);
-        rows[2].push(`<td>${item.transactionDate}</td>`);
-        rows[3].push(`<td>${item.reportingName}</td>`);
-        rows[4].push(`<td>${item.transactionType}</td>`);
-        rows[5].push(`<td>${item.securitiesOwned.toLocaleString()}</td>`);
-        rows[6].push(`<td>${item.securitiesTransacted.toLocaleString()}</td>`);
-        rows[7].push(`<td>${item.securityName}</td>`);
-        rows[8].push(`<td>$${item.price.toFixed(2)}</td>`);
-        rows[9].push(`<td>${item.formType}</td>`);
-        rows[10].push(`<td><a href="${item.link}" target="_blank">View Form</a></td>`);
-    });
-
-    // 創建 HTML 表格，並保持第一列使用 <th> 並帶有特定的背景色
-    let htmlContent = '<table border="1" style="width: 100%; border-collapse: collapse;">';
-    rows.forEach(row => {
-        htmlContent += `<tr>${row.join('')}</tr>`;
-    });
-    htmlContent += '</table>';
-
-    table.innerHTML = htmlContent;
-}
-
-
-
-
-
-
-
-

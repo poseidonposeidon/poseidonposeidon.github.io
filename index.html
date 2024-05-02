@@ -22,7 +22,7 @@
     <div class="scroll-container">
         <table id="IncomeStatementTable" border="1" style="width: 100%; border-collapse: collapse;">
         <div id="incomeStatementContainer"></div>
-     </table>
+        </table>
     </div>
     </div>
 
@@ -50,7 +50,11 @@
         <input type="date" id="fromDate_1" placeholder="From Date">
         <input type="date" id="toDate_1" placeholder="To Date">
         <button onclick="fetch_historical_earning_calendar()">載入日曆</button>
+        <div class="scroll-container">
+        <table id="historical_earning_calendarTable" border="1" style="width: 100%; border-collapse: collapse;">
         <div id="historical_earning_calendar"></div>
+        </table>
+        </div>
     </div>
 
     <div>

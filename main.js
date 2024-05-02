@@ -287,9 +287,11 @@ function display_historical_earning_calendar(data, container) {
         symbol: ['Symbol'],
         eps: ['EPS'],
         estimatedEPS: ['Estimated EPS'],
+        epsDifference: ['EPS預期差異'], // 新增列标题
         time: ['Time'],
         revenue: ['Revenue'],
         estimatedRevenue: ['Estimated Revenue'],
+        revenueDifference: ['營收預期差異'], // 新增列标题
         fiscalDateEnding: ['Fiscal Date Ending']
     };
 
@@ -300,9 +302,23 @@ function display_historical_earning_calendar(data, container) {
             rows.symbol.push(item.symbol || 'N/A');
             rows.eps.push(item.eps != null ? item.eps : 'N/A');
             rows.estimatedEPS.push(item.epsEstimated != null ? item.epsEstimated : 'N/A');
+            // 计算 EPS 预期差异百分比
+            if (item.eps != null && item.epsEstimated != null && item.epsEstimated !== 0) {
+                const epsDifference = ((item.eps - item.epsEstimated) / item.epsEstimated * 100).toFixed(2) + '%';
+                rows.epsDifference.push(epsDifference);
+            } else {
+                rows.epsDifference.push('N/A');
+            }
             rows.time.push(item.time || 'N/A');
             rows.revenue.push(item.revenue != null ? item.revenue.toLocaleString() : 'N/A');
             rows.estimatedRevenue.push(item.revenueEstimated != null ? item.revenueEstimated.toLocaleString() : 'N/A');
+            // 计算营收预期差异百分比
+            if (item.revenue != null && item.revenueEstimated != null && item.revenueEstimated !== 0) {
+                const revenueDifference = ((item.revenue - item.revenueEstimated) / item.revenueEstimated * 100).toFixed(2) + '%';
+                rows.revenueDifference.push(revenueDifference);
+            } else {
+                rows.revenueDifference.push('N/A');
+            }
             rows.fiscalDateEnding.push(item.fiscalDateEnding || 'N/A');
         }
     });
@@ -318,6 +334,7 @@ function display_historical_earning_calendar(data, container) {
     htmlContent += '</table>';
     container.innerHTML = htmlContent;
 }
+
 
 
 function fetchData_historical_earning_calendar(apiUrl, callback, containerId) {

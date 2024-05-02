@@ -1,8 +1,17 @@
 
-function fetchStock(){
+function fetchStock() {
     const stockSymbol = document.getElementById('stockSymbol').value.trim().toUpperCase();
+    // 清空所有相關的容器
+    const containers = ['incomeStatementContainer', 'earningsCallTranscriptContainer', 'earningsCallCalendarContainer', 'historical_earning_calendar', 'stock_dividend_calendar'];
+    containers.forEach(containerId => {
+        const container = document.getElementById(containerId);
+        if (container) {
+            container.innerHTML = ''; // 清空容器内容
+        }
+    });
     return stockSymbol;
 }
+
 
 //////////////財務收入 Income Statement/////////////////
 function fetchIncomeStatement() {

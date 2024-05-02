@@ -32,60 +32,65 @@ function fetchIncomeStatement() {
 function displayIncomeStatement(data, container) {
     if (!data || !Array.isArray(data) || data.length === 0) {
         container.innerHTML = '<p>Data not available.</p>';
-        document.getElementById('expandButton_Income').style.display = 'none'; // 隱藏按鈕
-        document.getElementById('collapseButton_Income').style.display = 'none';
+        const expandButton = document.getElementById('expandButton_Income');
+        if (expandButton) expandButton.style.display = 'none'; // 隐藏按钮
+        const collapseButton = document.getElementById('collapseButton_Income');
+        if (collapseButton) collapseButton.style.display = 'none';
         return;
     }
 
-    let previewContent = '<ul id="IncomeStatementPreview">';
-    let fullContent = '<ul id="fullIncomeStatement" style="display: none;">'; // 初始時設置為隱藏
+    let rows = {
+        date: ['Date'],
+        symbol: ['Symbol'],
+        totalRevenue: ['Total Revenue'],
+        costOfRevenue: ['Cost of Revenue'],
+        grossProfit: ['Gross Profit'],
+        researchAndDevelopmentExpenses: ['Research and Development Expenses'],
+        sellingGeneralAndAdministrativeExpenses: ['Selling, General and Administrative Expenses'],
+        interestExpense: ['Interest Expense'],
+        operatingIncome: ['Operating Income'],
+        incomeBeforeTax: ['Income Before Tax'],
+        netIncome: ['Net Income'],
+        netIncomeRatio: ['Net Income Ratio'],
+        eps: ['EPS'],
+        link: ['Report Link']
+    };
 
-    data.forEach((entry, index) => {
-        const itemHTML = `
-            <li>Date: ${entry.date || 'N/A'}</li>
-            <li>Symbol: ${entry.symbol || 'N/A'}</li>
-            <li>Total Revenue: ${formatNumber(entry.revenue)}</li>
-            <li>Cost of Revenue: ${formatNumber(entry.costOfRevenue)}</li>
-            <li>Gross Profit: ${formatNumber(entry.grossProfit)}</li>
-            <li>Research and Development Expenses: ${formatNumber(entry.researchAndDevelopmentExpenses)}</li>
-            <li>Selling, General and Administrative Expenses: ${formatNumber(entry.sellingGeneralAndAdministrativeExpenses)}</li>
-            <li>Interest Expense: ${formatNumber(entry.interestExpense)}</li>
-            <li>Operating Income: ${formatNumber(entry.operatingIncome)}</li>
-            <li>Income Before Tax: ${formatNumber(entry.incomeBeforeTax)}</li>
-            <li>Net Income: ${formatNumber(entry.netIncome)}</li>
-            <li>Net Income Ratio: ${entry.netIncomeRatio ? (entry.netIncomeRatio * 100).toFixed(2) + '%' : 'N/A'}</li>
-            <li>EPS: ${entry.eps || 'N/A'}</li>
-            <li>Link to Report: <a href="${entry.link}" target="_blank">View Report</a></li>
-            </br>
-        `;
-
-        if (index === 0) {
-            previewContent += itemHTML; // 只加第一筆資料至預覽部分
-        }
-        fullContent += itemHTML; // 加所有資料至完整部分
+    // 填充行数据
+    data.forEach(entry => {
+        rows.date.push(entry.date || 'N/A');
+        rows.symbol.push(entry.symbol || 'N/A');
+        rows.totalRevenue.push(formatNumber(entry.revenue));
+        rows.costOfRevenue.push(formatNumber(entry.costOfRevenue));
+        rows.grossProfit.push(formatNumber(entry.grossProfit));
+        rows.researchAndDevelopmentExpenses.push(formatNumber(entry.researchAndDevelopmentExpenses));
+        rows.sellingGeneralAndAdministrativeExpenses.push(formatNumber(entry.sellingGeneralAndAdministrativeExpenses));
+        rows.interestExpense.push(formatNumber(entry.interestExpense));
+        rows.operatingIncome.push(formatNumber(entry.operatingIncome));
+        rows.incomeBeforeTax.push(formatNumber(entry.incomeBeforeTax));
+        rows.netIncome.push(formatNumber(entry.netIncome));
+        rows.netIncomeRatio.push(entry.netIncomeRatio ? (entry.netIncomeRatio * 100).toFixed(2) + '%' : 'N/A');
+        rows.eps.push(entry.eps || 'N/A');
+        rows.link.push(`<a href="${entry.link}" target="_blank">View Report</a>`);
     });
 
-    previewContent += '</ul>';
-    fullContent += '</ul>';
+    // 构建 HTML 表格
+    let htmlContent = '<table border="1" style="width: 100%; border-collapse: collapse;">';
+    Object.keys(rows).forEach(key => {
+        htmlContent += `<tr><th>${rows[key][0]}</th>`;
+        rows[key].slice(1).forEach(value => {
+            htmlContent += `<td>${value}</td>`;
+        });
+        htmlContent += '</tr>';
+    });
+    htmlContent += '</table>';
 
-    container.innerHTML = previewContent + fullContent;
-    document.getElementById('expandButton_Income').style.display = 'inline'; // 顯示 Read More 按鈕
+    container.innerHTML = htmlContent;
+    const expandButton = document.getElementById('expandButton_Income');
+    if (expandButton) expandButton.style.display = 'inline'; // 显示 Read More 按钮
 }
 
 
-function expandIncomeStatement() {
-    document.getElementById('IncomeStatementPreview').style.display = 'none';
-    document.getElementById('fullIncomeStatement').style.display = 'block';
-    document.getElementById('expandButton_Income').style.display = 'none';
-    document.getElementById('collapseButton_Income').style.display = 'inline';
-}
-
-function collapseIncomeStatement() {
-    document.getElementById('IncomeStatementPreview').style.display = 'block';
-    document.getElementById('fullIncomeStatement').style.display = 'none';
-    document.getElementById('expandButton_Income').style.display = 'inline';
-    document.getElementById('collapseButton_Income').style.display = 'none';
-}
 
 function formatNumber(value) {
     // Check if the value is numeric and format it, otherwise return 'N/A'

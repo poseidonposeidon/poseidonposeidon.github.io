@@ -1,6 +1,12 @@
+
+function fetchStock(){
+    const stockSymbol = document.getElementById('stockSymbol').value.trim().toUpperCase();
+    return stockSymbol;
+}
+
 //////////////財務收入 Income Statement/////////////////
 function fetchIncomeStatement() {
-    const stockSymbol = document.getElementById('stockSymbol').value.trim().toUpperCase();
+    stockSymbol = fetchStock();
     const period = document.getElementById('period').value;  // 獲取選擇的時段
     const apiKey = 'GXqcokYeRt6rTqe8cpcUxGPiJhnTIzkf';
 
@@ -98,9 +104,10 @@ function fetchData_IncomeStatement(apiUrl, callback, containerId) {
             container.innerHTML = '<p>Error loading data. Please check the console for more details.</p>';
         });
 }
+
 //////////////法說會逐字稿 Earnings Call Transcript/////////////////
 function fetchEarningsCallTranscript() {
-    const stockSymbol = document.getElementById('stockSymbol').value.trim().toUpperCase();
+    stockSymbol = fetchStock();
     const year = document.getElementById('yearInput').value;
     const quarter = document.getElementById('quarterInput').value;
     const apiKey = 'GXqcokYeRt6rTqe8cpcUxGPiJhnTIzkf'; // Your API key
@@ -163,7 +170,7 @@ function fetchData_Transcript(apiUrl, callback, containerId) {
 function fetchEarningsCallCalendar() {
     const fromDate = document.getElementById('fromDate').value;
     const toDate = document.getElementById('toDate').value;
-    const stockSymbol = document.getElementById('stockSymbol').value.trim().toUpperCase();
+    stockSymbol = fetchStock();
     const apiKey = 'GXqcokYeRt6rTqe8cpcUxGPiJhnTIzkf';
     if (!fromDate || !toDate) {
         alert('Please enter both from and to dates.');
@@ -239,7 +246,7 @@ function fetchData_2(apiUrl, callback, containerId) {
 //////////////歷史獲利和未來獲利 Historical and Future Earnings/////////////////
 
 function fetch_historical_earning_calendar() {
-    const stockSymbol = document.getElementById('stockSymbol').value.trim().toUpperCase();
+    stockSymbol = fetchStock();
     const apiKey = 'GXqcokYeRt6rTqe8cpcUxGPiJhnTIzkf'; // 你的 API 密鑰
     if (!stockSymbol) {
         alert('Please enter a stock symbol.');
@@ -331,7 +338,7 @@ function fetch_stock_dividend_calendar() {
 }
 
 function display_stock_dividend_calendar(data, container) {
-    const stockSymbol = document.getElementById('stockSymbol').value.trim().toUpperCase(); // 获取用户输入的股票代码
+    stockSymbol = fetchStock();
     if (!data || data.length === 0) {
         container.innerHTML = '<p>No data available for the selected dates.</p>';
         return;

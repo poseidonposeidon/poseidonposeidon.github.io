@@ -236,6 +236,7 @@ function fetchData_2(apiUrl, callback, containerId) {
             container.innerHTML = `<p>Error loading data: ${error.message}. Please check the console for more details.</p>`;
         });
 }
+//////////////歷史獲利和未來獲利 Historical and Future Earnings/////////////////
 
 function fetch_historical_earning_calendar() {
     const stockSymbol = document.getElementById('stockSymbol').value.trim().toUpperCase();
@@ -314,4 +315,89 @@ function fetchData_historical_earning_calendar(apiUrl, callback, containerId) {
         });
 }
 
+//////////////股利發放日期/////////////////
+function fetch_stock_dividend_calendar() {
+    const fromDate = document.getElementById('fromDate_2').value;
+    const toDate = document.getElementById('toDate_2').value;
+    const apiKey = 'GXqcokYeRt6rTqe8cpcUxGPiJhnTIzkf'; // 请替换成您的 API 密钥
 
+    if (!fromDate || !toDate) {
+        alert('Please enter both a start and an end date.');
+        return;
+    }
+
+    const apiUrl = `https://financialmodelingprep.com/api/v3/stock_dividend_calendar?from=${fromDate}&to=${toDate}&apikey=${apiKey}`;
+    fetchData(apiUrl, display_stock_dividend_calendar, 'stock_dividend_calendar');
+}
+
+function display_stock_dividend_calendar(data, container) {
+    const stockSymbol = document.getElementById('stockSymbol').value.trim().toUpperCase(); // 获取用户输入的股票代码
+    if (!data || data.length === 0) {
+        container.innerHTML = '<p>No data available for the selected dates.</p>';
+        return;
+    }
+
+    let htmlContent = '<table border="1">';
+    htmlContent += `
+        <tr>
+            <th>Date</th>
+            <th>Label</th>
+            <th>Symbol</th>
+            <th>Dividend</th>
+            <th>Adjusted Dividend</th>
+            <th>Declaration Date</th>
+            <th>Record Date</th>
+            <th>Payment Date</th>
+        </tr>
+    `;
+
+    // 过滤并只显示匹配的股票代码
+    data.forEach(item => {
+        if (item.symbol.toUpperCase() === stockSymbol) { // 只添加符合输入的股票代码的行
+            htmlContent += `
+                <tr>
+                    <td>${item.date || 'N/A'}</td>
+                    <td>${item.label || 'N/A'}</td>
+                    <td>${item.symbol || 'N/A'}</td>
+                    <td>${item.dividend != null ? item.dividend : 'N/A'}</td>
+                    <td>${item.adjDividend != null ? item.adjDividend : 'N/A'}</td>
+                    <td>${item.declarationDate || 'N/A'}</td>
+                    <td>${item.recordDate || 'N/A'}</td>
+                    <td>${item.paymentDate || 'N/A'}</td>
+                </tr>
+            `;
+        }
+    });
+
+    htmlContent += '</table>';
+    container.innerHTML = htmlContent;
+
+    if (htmlContent.indexOf('<tr>') === -1) { // 如果没有匹配的数据，显示消息
+        container.innerHTML = '<p>No data available for the selected stock symbol.</p>';
+    }
+}
+
+
+
+function fetchData(apiUrl, callback, containerId) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '<p>Loading...</p>'; // 提供加载时的临时内容
+    fetch(apiUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (!data || data.length === 0) {
+                container.innerHTML = '<p>No data available.</p>';
+                return;
+            }
+            callback(data, container);
+        })
+        .catch(error => {
+            console.error('Error fetching data: ', error);
+            container.innerHTML = '<p>Error loading data. Please check the console for more details.</p>';
+        });
+}
